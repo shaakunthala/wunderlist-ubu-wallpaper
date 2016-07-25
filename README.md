@@ -2,6 +2,7 @@
 ## What's New (25 June 2016)
 * Eliminated the additional copy of source image file. Instead, introduced a settings file that will keep a hash of the previous run.
 * If Today's list hasn't changed since the previous run, image processing will not take place. This eliminates unnecessary I/O overhead.
+
 ## ATTENTION
 This project has some pending work. It is not ready for regular personal use, and may require some additonal work if you set it up on your computer. Just look at the steps below - there are too many - means there's still some work to do before making this official. :)
 ## Introduction

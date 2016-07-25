@@ -1,8 +1,12 @@
 #!/usr/bin/python
 
-import urllib2, json, time, datetime, sys, os, PIL
+# Visit https://developer.wunderlist.com/apps to find these values.
+client_id = ""
+access_token = ""
 
-from shutil import copyfile
+import urllib2, json, time, datetime, sys, os, hashlib, ConfigParser, PIL
+
+from ConfigParser import SafeConfigParser
 
 from PIL import ImageFont
 from PIL import Image
@@ -10,26 +14,77 @@ from PIL import ImageDraw
 
 from pprint import pprint
 
+# TODO:
+# Check for any exiting instances of the script and kill them before execution.
+
+
+# Save settings function
+def savesettings (config, pref_file):
+  with open(pref_file, 'w') as sf:
+    config.write (sf)
+  return True
+  
+# Load settings function
+def loadsettings (pref_file):
+  config = SafeConfigParser()
+  config.read (pref_file)
+  return config
 
 a = sys.argv
 homedir = os.path.expanduser('~')
+appdir = homedir + "/.wunderlist-wall"
+infile= ""
+outfile = appdir + "/wallpaper"
+settingsfile = appdir + "/settings"
+override_skip = False
+force_write_settings = False
+
+default_wallpaper = "/usr/share/backgrounds/warty-final-ubuntu.png"
+
+# Read settings file, and if there's none, create one with default settings.
+try:
+  open (settingsfile, 'a').close ()
+  conf = loadsettings (settingsfile)
+except:
+  print ("Settings error. Re-creating settings file...")
+  open (settingsfile, 'w').close ()
+
+
+# Read config
+try:
+  conf.get ("main", "src_file")
+except ConfigParser.NoSectionError:
+  print ("Creating a new settings file with default Ubuntu wallpaper.")
+  conf.add_section ("main")
+  conf.set ("main", "src_file", default_wallpaper)
+  force_write_settings = True
+except ConfigParser.NoOptionError:
+  conf.set ("main", "src_file", default_wallpaper)
+  force_write_settings = True
+
+try:
+  conf.get ("main", "last_run")
+except ConfigParser.NoOptionError:
+  conf.set ("main", "last_run", "")
+
+infile = conf.get ("main", "src_file")
+last_run = conf.get ("main", "last_run")
+
+
+# Check if new setting provided by command line parameter
 try:
   a[1]
 except IndexError:
   pass
 else:
-  # Copy the provided file
-  source_file = a[1]
-  try:
-    copyfile (source_file, homedir + "/.wunderlist-wall/wallpaper.original")
+  if (infile != a[1]):
+    conf.set ("main", "src_file", a[1])
+    infile = a[1]
+    override_skip = True
     print ("Wallpaper replaced.")
-  except IOError:
-    print ("I/O error. Unable to copy the provided file ' " + source_file + " '.")
-    quit (1)
-
-# Visit https://developer.wunderlist.com/apps to find these values.
-client_id = ""
-access_token = ""
+  else:
+    print ("Already using this wallpaper.")
+    
 
 print "Quering task lists..."
 req = urllib2.Request ('https://a.wunderlist.com/api/v1/lists', headers = {'X-Access-Token' : access_token, 'X-Client-ID' : client_id})
@@ -81,8 +136,21 @@ for tasklist in lists_json:
 tasks_array_today.sort ()
 tasks_array_overdue.sort ()
 
+# Compare task list hash arrays and stop if no update is required. This is to reduce I/O overhead.
+current_run = str (hashlib.sha1 (str (tasks_array_today)).hexdigest ()) + "::" + str (hashlib.sha1 (str (tasks_array_overdue)).hexdigest ())
+if (override_skip == False):
+  if (last_run == current_run):
+    # Do not continue. Save setting if forced file and exit.
+    if (force_write_settings == True):
+      savesettings (conf, settingsfile)
+    print ("Task list hasn't changed since the last run. Nothing to do.")
+    quit ()
+  else:
+    conf.set ("main", "last_run", current_run)
+conf.set ("main", "last_run", current_run)
+
 # Now the image processing part. Draw text on the wallpaper.
-wp = Image.open (homedir + "/.wunderlist-wall/wallpaper.original")
+wp = Image.open (infile)
 # Understand the image geometry
 wp_w = wp.width
 wp_h = wp.height
@@ -142,12 +210,16 @@ if (len (tasks_array_today) != 0):
       next_line = ft.getsize (current_line)[1]
       d = ImageDraw.Draw (wp)
 
-wp.save (homedir + "/.wunderlist-wall/wallpaper.processed", "PNG")
+wp.save (outfile, "PNG")
 
 # Set new wallpaper
-# gsettings set org.gnome.desktop.background picture-uri "file:////usr/share/backgrounds/warty-final-ubuntu.png"
-os.system ("gsettings set org.gnome.desktop.background picture-uri \"file://" + homedir + "/.wunderlist-wall/wallpaper.processed\"")
+os.system ("gsettings set org.gnome.desktop.background picture-uri \"file://" + outfile + "\"")
+
+print ("Saving settings...")
+
+savesettings (conf, settingsfile)
 
 print ("Done.\n")
+
 
 

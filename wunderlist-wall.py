@@ -4,9 +4,10 @@
 client_id = ""
 access_token = ""
 
-import urllib2, json, time, datetime, sys, os, hashlib, ConfigParser, PIL
+import urllib2, json, time, datetime, sys, os, hashlib, ConfigParser, tempfile, PIL
 
 from ConfigParser import SafeConfigParser
+from shutil import copyfile
 
 from PIL import ImageFont
 from PIL import Image
@@ -16,6 +17,7 @@ from pprint import pprint
 
 # TODO:
 # Check for any exiting instances of the script and kill them before execution.
+# Improve visibility of text.
 
 
 # Save settings function
@@ -137,7 +139,7 @@ tasks_array_today.sort ()
 tasks_array_overdue.sort ()
 
 # Compare task list hash arrays and stop if no update is required. This is to reduce I/O overhead.
-current_run = str (hashlib.sha1 (str (tasks_array_today)).hexdigest ()) + "::" + str (hashlib.sha1 (str (tasks_array_overdue)).hexdigest ())
+current_run = str (hashlib.sha1 (str (tasks_array_today)).hexdigest ()) + str (hashlib.sha1 (str (tasks_array_overdue)).hexdigest ())
 if (override_skip == False):
   if (last_run == current_run):
     # Do not continue. Save setting if forced file and exit.
@@ -210,13 +212,18 @@ if (len (tasks_array_today) != 0):
       next_line = ft.getsize (current_line)[1]
       d = ImageDraw.Draw (wp)
 
-wp.save (outfile, "PNG")
+print ("Saving processed image...")
+# Create a temporary file and save image. Then move it. This is to avoid blackout if image saving takes too long.
+tmpf = tempfile.mkstemp ()
+wp.save (tmpf[1], "PNG", optimize=True)
+copyfile (tmpf[1], outfile)
+os.remove (tmpf[1])
 
 # Set new wallpaper
+print ("Setting new wallpaper...")
 os.system ("gsettings set org.gnome.desktop.background picture-uri \"file://" + outfile + "\"")
 
 print ("Saving settings...")
-
 savesettings (conf, settingsfile)
 
 print ("Done.\n")

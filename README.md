@@ -1,7 +1,7 @@
 # Wunderlist Today in Ubuntu Wallpaper
-## What's New (25 June 2016)
-* Eliminated the additional copy of source image file. Instead, introduced a settings file that will keep a hash of the previous run.
-* If Today's list hasn't changed since the previous run, image processing will not take place. This eliminates unnecessary I/O overhead.
+## What's New (26 June 2016)
+* Processed image will now be saved to /tmp and then be overwritten into the wallpaper copy in `~/.wunderlist-wall`. This will reduce the blackout time during wallpaper udate.
+* Image saving is now optimized, and it will use PNG compression level 9.
 
 ## ATTENTION
 This project has some pending work. It is not ready for regular personal use, and may require some additonal work if you set it up on your computer. Just look at the steps below - there are too many - means there's still some work to do before making this official. :)
@@ -19,3 +19,8 @@ Current state work is only suitable for use with light colour wallpapers, becaus
 * Make our Python script executable by doing `chmod +x ~/bin/wunderlist-wall.py`.
 * Execute `wunderlist-wall.py <path to source wallpaper of choice>`. This is a one-time step. Example: `wunderlist-wall.py /usr/share/backgrounds/warty-final-ubuntu.png`
 * Run the same command without any parameters (`./wunderlist-wall.py`). This should change your wallpaper. Set this up as a cronjob (`crontab -e`) to periodically query and update wallpaper. (Example: `0,15,30,45 * * * *	/usr/bin/python /home/ushaasa/bin/wunderlist-wall.py`)
+
+## Changelog
+### 25 June 2016
+* Eliminated the additional copy of source image file. Instead, introduced a settings file that will keep a hash of the previous run.
+* If Today's list hasn't changed since the previous run, image processing will not take place. This eliminates unnecessary I/O overhead.

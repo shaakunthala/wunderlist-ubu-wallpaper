@@ -34,7 +34,7 @@ def loadsettings (pref_file):
 
 a = sys.argv
 homedir = os.path.expanduser('~')
-appdir = homedir + "/.wunderlist-wall"
+appdir = homedir + "/.wunderlist-bg"
 infile= ""
 outfile = appdir + "/wallpaper"
 settingsfile = appdir + "/settings"

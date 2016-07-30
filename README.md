@@ -11,14 +11,14 @@ Current state work is only suitable for use with light colour wallpapers, becaus
 
 **Disclaimer: This work is not officially affiliated with Wunderlist Gmbh. or Microsoft Corporation.**
 ## How to use
-* Download the file `wunderlist-wall.py`.
+* Download the file `wunderlist-bg.py`.
 * Visit https://developer.wunderlist.com/apps to set up a client ID and an access token.
-* Edit the file `wunderlist-wall.py` and set values for `client_id` and `access_token` variables (lines 4 & 5).
+* Edit the file `wunderlist-bg.py` and set values for `client_id` and `access_token` variables (lines 4 & 5).
 * Create directory `~/.wunderslit-wall`.
 * Create directory `~/bin` if you don't have it, and then copy our Python script into that.
-* Make our Python script executable by doing `chmod +x ~/bin/wunderlist-wall.py`.
-* Execute `wunderlist-wall.py <path to source wallpaper of choice>`. This is a one-time step. Example: `wunderlist-wall.py /usr/share/backgrounds/warty-final-ubuntu.png`
-* Run the same command without any parameters (`./wunderlist-wall.py`). This should change your wallpaper. Set this up as a cronjob (`crontab -e`) to periodically query and update wallpaper. (Example: `0,15,30,45 * * * *	/usr/bin/python /home/ushaasa/bin/wunderlist-wall.py`)
+* Make our Python script executable by doing `chmod +x ~/bin/wunderlist-bg.py`.
+* Execute `wunderlist-bg.py <path to source wallpaper of choice>`. This is a one-time step. Example: `wunderlist-bg.py /usr/share/backgrounds/warty-final-ubuntu.png`
+* Run the same command without any parameters (`./wunderlist-bg.py`). This should change your wallpaper. Set this up as a cronjob (`crontab -e`) to periodically query and update wallpaper. (Example: `0,15,30,45 * * * *	/usr/bin/python /home/ushaasa/bin/wunderlist-bg.py`)
 
 ## Changelog
 ### 25 June 2016

@@ -4,7 +4,7 @@
 client_id = ""
 access_token = ""
 
-import urllib2, json, time, datetime, sys, os, hashlib, ConfigParser, tempfile, PIL
+import urllib2, json, time, datetime, sys, os, hashlib, ConfigParser, tempfile, gtk, pygtk, PIL
 
 from ConfigParser import SafeConfigParser
 from shutil import copyfile
@@ -157,11 +157,17 @@ wp = Image.open (infile)
 wp_w = wp.width
 wp_h = wp.height
 
+# Understand the screen geometry (height is enough right now.
+w = gtk.Window ()
+scr = w.get_screen ()
+scr_h = scr.get_height ()
+
 # Undertand the understand the drawing geometry
 # Top right
 # 60% of width
 # 100% of height, but keep margin for menubar
-menubar_padding = (24 + 50) # Hardcoded menubar size in px + some padding
+menubar_padding = int (round ((float (24) / float (scr_h)) * wp_h)) # Hardcoded menubar size as 24 px for the time being
+
 x_crd = wp_w * 0.6
 y_crd = menubar_padding
 # Font size 40, Ubuntu works for 878 px height image
@@ -227,6 +233,5 @@ print ("Saving settings...")
 savesettings (conf, settingsfile)
 
 print ("Done.\n")
-
 
 

@@ -4,6 +4,9 @@
 * Improved text visibility by highlighting text. This may ruin beauty of backgrounds, so I plan to make the highlight transparent in a future release.
 * ~~My code needs a fix now. :-) There are so many repeated lines written in a rush. This is the highest priority now, but I'll do it some time later.~~ Code cleaned up a bit!
 
+## Issues
+Please report issues at https://github.com/shaakunthala/wunderlist-ubuntu-background/issues or mail to sameera ... shaakunthala.com . Constructive feedback is much appreciated. :)
+
 ## Introduction
 **Wunderlist Today in Ubuntu Desktop Background** is a simple Python script that will update your Ubuntu dekstop background with today's tasks in Wunderlist. Tasks will appear on the top right of the chosen image.
 If you wish to contribute, start right away! If you wish to contact me, mail sameera ... shaakunthala.com .

@@ -90,7 +90,8 @@ except IndexError:
   pass
 else:
   if (infile != a[1]):
-    conf.set ("main", "src_file", a[1])
+    src_abspath = os.path.abspath (a[1])
+    conf.set ("main", "src_file", src_abspath)
     infile = a[1]
     override_skip = True
     print ("Wallpaper replaced.")

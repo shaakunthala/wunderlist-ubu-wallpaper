@@ -1,6 +1,6 @@
 # Wunderlist Today in Ubuntu Desktop Background
 ## What's New (14 August 2016)
-* Issue #2 fixed.
+* Issue #2 & #4 fixed.
 * Improved text visibility by highlighting text. This may ruin beauty of backgrounds, so I plan to make the highlight transparent in a future release.
 * ~~My code needs a fix now. :-) There are so many repeated lines written in a rush. This is the highest priority now, but I'll do it some time later.~~ Code cleaned up a bit!
 

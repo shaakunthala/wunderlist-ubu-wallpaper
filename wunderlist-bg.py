@@ -32,13 +32,23 @@ def loadsettings (pref_file):
   config.read (pref_file)
   return config
 
+# Calculates Text highlighter line geometry
+def gethighlightercoords (font, text, x, y):
+  txt_w = font.getsize (text)[0]
+  txt_h = font.getsize (text)[1]
+  x1 = x
+  y1 = y2 = int (round (y + (txt_h / 2)))
+  x2 = txt_w + x
+  return (x1, y1, x2, y2)
+  
+
 a = sys.argv
 homedir = os.path.expanduser('~')
 appdir = homedir + "/.wunderlist-bg"
 infile= ""
 outfile = appdir + "/wallpaper"
 settingsfile = appdir + "/settings"
-override_skip = True
+override_skip = False
 force_write_settings = False
 
 default_wallpaper = "/usr/share/backgrounds/warty-final-ubuntu.png"
@@ -183,29 +193,20 @@ ft = ImageFont.truetype ("Ubuntu-R.ttf", f_size, 0, "unic") # Regular
 d = ImageDraw.Draw (wp)
 header = "Wunderlist Today"
 # Predict the geometry of text to be drawn
-prd_txt_w = fh.getsize (header)[0]
 prd_txt_h = fh.getsize (header)[1]
 # To improve visibility of text, draw a background highlight line
-bg_hl_x1 = x_crd
-bg_hl_y1 = int (round (y_crd + (prd_txt_h / 2)))
-bg_hl_x2 = prd_txt_w + x_crd
-bg_hl_y2 = int (round (y_crd + (prd_txt_h / 2)))
-d.line ((bg_hl_x1, bg_hl_y1, bg_hl_x2, bg_hl_y2), (190, 190, 190), prd_txt_h + 5)
+highlighter = gethighlightercoords (fh, header, x_crd, y_crd)
+d.line (highlighter, (190, 190, 190), prd_txt_h + 5)
 # Draw text now
 d.text ((x_crd, y_crd), header, (0, 0, 0), font=fh)
-#d = ImageDraw.Draw (wp)
 
 # Overdue
 if (len (tasks_array_overdue) != 0):
   header = "Overdue"
   y_crd = y_crd + prd_txt_h + 15
-  prd_txt_w = fsh.getsize (header)[0]
   prd_txt_h = fsh.getsize (header)[1]
-  bg_hl_x1 = x_crd
-  bg_hl_y1 = int (round (y_crd + (prd_txt_h / 2)))
-  bg_hl_x2 = prd_txt_w + x_crd
-  bg_hl_y2 = int (round (y_crd + (prd_txt_h / 2)))
-  d.line ((bg_hl_x1, bg_hl_y1, bg_hl_x2, bg_hl_y2), (190, 190, 190), prd_txt_h + 5)
+  highlighter = gethighlightercoords (fsh, header, x_crd, y_crd)
+  d.line (highlighter, (190, 190, 190), prd_txt_h + 5)
   d.text ((x_crd, y_crd), header, (255, 0, 0), font=fsh)
   d = ImageDraw.Draw (wp)
   for t in tasks_array_overdue:
@@ -213,27 +214,18 @@ if (len (tasks_array_overdue) != 0):
     if (t[0] == 1): # Overdue tasks first
       y_crd = y_crd + prd_txt_h + 10
       current_line = t[1] + " :: " + t[2]
-      prd_txt_w = ft.getsize (current_line)[0]
       prd_txt_h = ft.getsize (current_line)[1]
-      bg_hl_x1 = x_crd
-      bg_hl_y1 = int (round (y_crd + (prd_txt_h / 2)))
-      bg_hl_x2 = prd_txt_w + x_crd
-      bg_hl_y2 = int (round (y_crd + (prd_txt_h / 2)))
-      d.line ((bg_hl_x1, bg_hl_y1, bg_hl_x2, bg_hl_y2), (190, 190, 190), prd_txt_h + 5)
+      highlighter = gethighlightercoords (ft, current_line, x_crd, y_crd)
+      d.line (highlighter, (190, 190, 190), prd_txt_h + 5)
       d.text ((x_crd, y_crd), current_line, (0, 0, 0), font=ft)
-      #d = ImageDraw.Draw (wp)
 
 # Today
 if (len (tasks_array_today) != 0):
   header = "Today"
   y_crd = y_crd + prd_txt_h + 15
-  prd_txt_w = fsh.getsize (header)[0]
   prd_txt_h = fsh.getsize (header)[1]
-  bg_hl_x1 = x_crd
-  bg_hl_y1 = int (round (y_crd + (prd_txt_h / 2)))
-  bg_hl_x2 = prd_txt_w + x_crd
-  bg_hl_y2 = int (round (y_crd + (prd_txt_h / 2)))
-  d.line ((bg_hl_x1, bg_hl_y1, bg_hl_x2, bg_hl_y2), (190, 190, 190), prd_txt_h + 5)
+  highlighter = gethighlightercoords (fsh, header, x_crd, y_crd)
+  d.line (highlighter, (190, 190, 190), prd_txt_h + 5)
   d.text ((x_crd, y_crd), header, (255, 255, 0), font=fsh)
   d = ImageDraw.Draw (wp)
   for t in tasks_array_today:
@@ -241,15 +233,10 @@ if (len (tasks_array_today) != 0):
     if (t[0] == 0): # Today's tasks now
       y_crd = y_crd + prd_txt_h + 10
       current_line = t[1] + " :: " + t[2]
-      prd_txt_w = ft.getsize (current_line)[0]
       prd_txt_h = ft.getsize (current_line)[1]
-      bg_hl_x1 = x_crd
-      bg_hl_y1 = int (round (y_crd + (prd_txt_h / 2)))
-      bg_hl_x2 = prd_txt_w + x_crd
-      bg_hl_y2 = int (round (y_crd + (prd_txt_h / 2)))
-      d.line ((bg_hl_x1, bg_hl_y1, bg_hl_x2, bg_hl_y2), (190, 190, 190), prd_txt_h + 5)
+      highlighter = gethighlightercoords (ft, current_line, x_crd, y_crd)
+      d.line (highlighter, (190, 190, 190), prd_txt_h + 5)
       d.text ((x_crd, y_crd), current_line, (0, 0, 0), font=ft)
-      #d = ImageDraw.Draw (wp)
 
 print ("Saving processed image...")
 # Create a temporary file and save image. Then move it. This is to avoid blackout if image saving takes too long.
